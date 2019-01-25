@@ -11,7 +11,7 @@ it('should read variables that are hex values', () => expect(lessVarsToJS(`
 
 it('should read variables that are named colours', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: lightblue;
   @pink: #e60278;
 `)).to.deep.equal({
@@ -21,7 +21,7 @@ it('should read variables that are named colours', () => expect(lessVarsToJS(`
 
 it('should read variables that reference other variables', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: lightblue;
   @pink: @blue;
 `)).to.deep.equal({
@@ -31,7 +31,7 @@ it('should read variables that reference other variables', () => expect(lessVars
 
 it('should resolve variables that reference other variables', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: lightblue;
   @pink: @blue;
 `, { resolveVariables: true })).to.deep.equal({
@@ -58,7 +58,7 @@ it('should ignore variables in comments', () => expect(lessVarsToJS(`
 
 it('should ignore import statements', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: #0d3880;
   @pink: #e60278;
 `)).to.deep.equal({
@@ -68,13 +68,13 @@ it('should ignore import statements', () => expect(lessVarsToJS(`
 
 it('should ignore rules', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: #0d3880;
-  
+
   .element {
     color: @foreground;
   }
-  
+
   @pink: #e60278;
 `)).to.deep.equal({
   '@blue': '#0d3880',
@@ -83,14 +83,14 @@ it('should ignore rules', () => expect(lessVarsToJS(`
 
 it('should ignore include variables from within', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   @blue: #0d3880;
-  
+
   .element {
     @foreground: black;
     color: @foreground;
   }
-  
+
   @pink: #e60278;
 `)).to.deep.equal({
   '@blue': '#0d3880',
@@ -100,7 +100,7 @@ it('should ignore include variables from within', () => expect(lessVarsToJS(`
 
 it('should not break in file with no variables', () => expect(lessVarsToJS(`
   @import (reference) 'theme';
-  
+
   .element {
     color: black;
   }
@@ -156,4 +156,16 @@ it('should support sass variables with stripPrefix', () => expect(lessVarsToJS(`
 `, { stripPrefix: true })).to.deep.equal({
   'font-stack': 'Helvetica, sans-serif',
   'primary-color': '#333'
+}));
+
+it('should parse functions when parseVariables is true', () => expect(lessVarsToJS(`
+  @color : darken(#2763fb, 20%);
+`, { parseVariables: true })).to.deep.equal({
+  '@color': '#0337b9'
+}));
+
+it('should ignore stripPrefix when parseVariables is true', () => expect(lessVarsToJS(`
+  @color : darken(#2763fb, 20%);
+`, { parseVariables: true, stripPrefix: true })).to.deep.equal({
+  '@color': '#0337b9'
 }));
